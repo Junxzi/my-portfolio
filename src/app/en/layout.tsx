@@ -15,8 +15,8 @@ export default function EnLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" suppressHydrationWarning>
+      <body suppressHydrationWarning={true}>
         <ThemeProvider>
           <div className="bg-background text-foreground font-sans">
             <header
