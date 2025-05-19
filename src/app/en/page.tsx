@@ -4,7 +4,7 @@ export default function EnglishHome() {
       <h1 className="text-2xl font-bold">
         Hello.
       </h1>
-      <p>This is the English root page.</p>
+      <p>左上のメニューから色々みれます。</p>
     </main>
   )
 }

@@ -32,7 +32,7 @@ export default function EnLayout({
 
               {/* 中央: Jun */}
               <div className="mx-auto">
-                <Link href="/en" className="text-xl font-bold">Jun</Link>
+                <Link href="/en" className="text-xl font-bold">Jun I.</Link>
               </div>
 
               {/* 右: 今は空、将来的に言語切替やアイコン入れてもOK */}

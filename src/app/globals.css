@@ -2,35 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 全体に serif フォントを適用（distinction風） */
+/* フォントと背景の初期設定 */
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 47.4% 11.2%;
+}
+
+.dark {
+  --background: 222.2 47.4% 11.2%;
+  --foreground: 210 40% 98%;
+}
+
+/* HTML と body に適用される背景・文字色 */
+html,
 body {
-  @apply bg-white text-black font-serif antialiased transition-colors duration-300;
+  @apply bg-background text-foreground font-sans;
 }
 
-/* ダークモード対応 */
-.dark body {
-  @apply bg-neutral-900 text-white;
-}
-
-/* 文章部分のダークモード調整（prose） */
+/* prose のダークモード対応 */
 .prose {
-  @apply prose-invert;
-}
-
-@layer utilities {
-  .animate-fade-in {
-    @apply opacity-100 scale-100;
-  }
-  
-  .animate-menu-enter {
-    @apply opacity-0 scale-95;
-    animation: menu-enter 200ms ease-out forwards;
-  }
-
-  @keyframes menu-enter {
-    to {
-      opacity: 1;
-      scale: 1;
-    }
-  }
+  @apply prose-neutral dark:prose-invert;
 }

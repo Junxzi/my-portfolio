@@ -7,24 +7,40 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 export default function MenuButton() {
   const [open, setOpen] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
   const drawerRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const { theme, toggleTheme } = useTheme()
 
-  // ✅ モバイルかどうか判定（768px以下）
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768)
+  const links = [
+    { href: '/en/about', label: 'About' },
+    { href: '/en/projects', label: 'Projects' },
+    { href: '/en/career', label: 'Career' },
+    { href: '/en/contact', label: 'Contact' },
+  ]
+  const ignoreNextOpen = useRef(false)
+
+  const handleClickToggle = () => {
+    if (open) {
+      ignoreNextOpen.current = true
+      setTimeout(() => {
+        ignoreNextOpen.current = false
+      }, 300) // 300msくらいで十分
     }
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
+    setOpen(!open)
+  }
 
-  // ✅ 外クリックで閉じる
   useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (drawerRef.current && !drawerRef.current.contains(e.target as Node)) {
-        setOpen(false)
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node
+      if (
+        drawerRef.current &&
+        !drawerRef.current.contains(target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(target)
+      ) {
+        if (!ignoreNextOpen.current) {
+          setOpen(false)
+        }
       }
     }
 
@@ -36,31 +52,20 @@ export default function MenuButton() {
     }
   }, [open])
 
-  const { theme, toggleTheme } = useTheme()
-
-  // ✅ リンク一覧
-  const links = [
-    { href: '/en/about', label: 'About' },
-    { href: '/en/projects', label: 'Projects' },
-    { href: '/en/diary', label: 'Diary' },
-    { href: '/en/contact', label: 'Contact' },
-  ]
 
   return (
     <>
-      {/* ☰ ボタン */}
+      {/* ☰ / × トグルボタン */}
       <button
-        onClick={() => isMobile && setOpen(!open)}
-        onMouseEnter={() => !isMobile && setOpen(true)}
-        className="text-4xl text-gray-800 dark:text-white
-                    hover:text-black dark:hover:text-gray-300
-                    transition duration-200"
+        ref={buttonRef}
+        onClick={handleClickToggle}
+        className="text-4xl text-gray-800 dark:text-white hover:text-black dark:hover:text-gray-300 transition duration-200 z-50 relative"
         aria-label="Toggle menu"
-        >
-        ☰
+      >
+        {open ? '×' : '☰'}
       </button>
 
-      {/* オーバーレイ */}
+      {/* 背景オーバーレイ */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -70,12 +75,12 @@ export default function MenuButton() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+            className="fixed top-[52px] left-0 right-0 bottom-0 inset-0 bg-black/40 backdrop-blur-sm z-40"
           />
         )}
       </AnimatePresence>
 
-      {/* 📱 ドロワー本体 */}
+      {/* メニュー本体 */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -85,12 +90,11 @@ export default function MenuButton() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: '-100%', opacity: 0 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            onMouseEnter={() => !isMobile && setOpen(true)}
-            onMouseLeave={() => !isMobile && setOpen(false)}
-            className="fixed top-0 left-0 h-full w-[80vw] max-w-xs z-50 bg-white dark:bg-gray-900 shadow-lg"
+            className="fixed top-[52px] left-0 h-[calc(100%-4rem)] w-[80vw] max-w-xs z-50 
+                       bg-white/90 dark:bg-gray-900/90 shadow-xl 
+                       backdrop-blur-md rounded-r-2xl"
           >
-            <div className="p-6 space-y-4 text-sm">
-              {/* ✅ 各リンクにふわっとアニメーション */}
+            <div className="p-6 space-y-6 text-lg">
               {links.map((link, i) => (
                 <motion.div
                   key={link.href}
@@ -98,7 +102,12 @@ export default function MenuButton() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.05 * i }}
                 >
-                  <Link href={link.href} className="block hover:underline" onClick={() => setOpen(false)}>
+                  <Link
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    className="block relative text-gray-800 dark:text-gray-200 hover:text-black dark:hover:text-white transition duration-200
+                               after:absolute after:left-0 after:-bottom-1 after:w-0 after:h-[1px] after:bg-current after:transition-all after:duration-300 hover:after:w-full"
+                  >
                     {link.label}
                   </Link>
                 </motion.div>
@@ -112,21 +121,22 @@ export default function MenuButton() {
                 transition={{ delay: 0.25 }}
               >
                 <div className="flex items-center justify-between">
-                    <span className="text-sm">Theme</span>
-                    <label className="inline-flex items-center cursor-pointer">
-                        <input
-                            type="checkbox"
-                            checked={theme === 'dark'}
-                            onChange={toggleTheme}
-                            className="sr-only"
-                        />
-                        <div className="w-11 h-6 bg-gray-300 dark:bg-gray-600 rounded-full relative transition-colors">
-                            <span
-                                className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transform transition-transform
-                                    ${theme === 'dark' ? 'translate-x-5' : 'translate-x-0'}`}
-                            />
-                        </div>
-                    </label>
+                  <span className="text-sm">Theme</span>
+                  <label className="inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={theme === 'dark'}
+                      onChange={toggleTheme}
+                      className="sr-only"
+                    />
+                    <div className="w-11 h-6 bg-gray-300 dark:bg-gray-600 rounded-full relative transition-colors">
+                      <span
+                        className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transform transition-transform ${
+                          theme === 'dark' ? 'translate-x-5' : 'translate-x-0'
+                        }`}
+                      />
+                    </div>
+                  </label>
                 </div>
               </motion.div>
             </div>
