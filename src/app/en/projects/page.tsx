@@ -6,12 +6,14 @@ export default function Projects() {
   const projectList = [
     {
       title: 'Tokyo Rent Prediction',
+      url: 'https://github.com/Junxzi/signate-studentcup2019',
       stack: 'Python, scikit-learn, pandas',
       description:
         'A regression model to predict apartment rent in Tokyo based on property features. Achieved the highest accuracy in a university seminar competition.',
     },
     {
       title: 'Financial News Sentiment Analysis',
+      url: 'https://github.com/Junxzi/news-sentiment-stock-prediction',
       stack: 'FinBERT, Python',
       description:
         'Analyzed sentiment of news articles for GAFAM stocks and evaluated correlation with returns. Designed for NLP × Finance predictive modeling.',
@@ -46,11 +48,17 @@ export default function Projects() {
           viewport={{ once: true }}
           className="border p-4 rounded-lg shadow-md bg-white/70 dark:bg-gray-900/60 backdrop-blur-md transition-all"
         >
+        <a
+          href={project.url}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <h3 className="text-xl font-semibold">{project.title}</h3>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
             Built with {project.stack}
           </p>
           <p>{project.description}</p>
+        </a>
         </motion.div>
       ))}
     </motion.section>
