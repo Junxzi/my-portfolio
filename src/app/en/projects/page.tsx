@@ -26,9 +26,9 @@ export default function Projects() {
         'Building a model that integrates ESG scores with historical stock data to predict price movements. Exploring ESG’s influence on long-term returns.',
     },
     {
-      title: 'Financial Document Analysis',
+      title: 'Nikkei225 Financial Document Analysis',
       inProgress: true,
-      stack: 'Python, BERT, EDINET',
+      stack: 'Python, RAG, EDINET',
       description:
         'Researching NLP applications in finance by extracting information from Japanese corporate disclosures (Yūhō) and evaluating predictive power for stock movement.',
     },
